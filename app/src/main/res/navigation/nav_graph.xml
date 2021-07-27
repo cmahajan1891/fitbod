@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/exercises">
 
+    <fragment
+        android:id="@+id/exercises"
+        android:name="com.example.fitbod.fragments.Exercises"
+        android:label="@string/main_page_label"
+        tools:layout="@layout/fragment_exercises" />
 </navigation>
