@@ -1,4 +1,4 @@
-package com.example.fitbod
+package com.example.fitbod.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import com.example.fitbod.DetailFragmentArgs
+import com.example.fitbod.R
 import com.example.fitbod.activity.MainActivity
 import com.example.fitbod.data.model.ExerciseModel
 import com.jjoe64.graphview.DefaultLabelFormatter

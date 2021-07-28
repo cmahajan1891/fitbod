@@ -8,8 +8,4 @@ annotation class ActivityScope
 
 @Scope
 @Retention(AnnotationRetention.SOURCE)
-annotation class ViewModelScope
-
-@Scope
-@Retention(AnnotationRetention.SOURCE)
 annotation class FragmentScope

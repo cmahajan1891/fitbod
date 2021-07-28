@@ -1,7 +1,6 @@
 package com.example.fitbod.di.modules
 
 import android.app.Activity
-import android.content.Context
 import androidx.lifecycle.ViewModelStoreOwner
 import com.example.fitbod.di.scopes.ActivityScope
 import com.example.fitbod.getViewModel
@@ -15,10 +14,6 @@ class ActivityModule(
     private val activity: Activity,
     private val viewModelStoreOwner: ViewModelStoreOwner
 ) {
-
-    @ActivityScope
-    @Provides
-    fun providesContext(): Context = activity
 
     @ActivityScope
     @Provides

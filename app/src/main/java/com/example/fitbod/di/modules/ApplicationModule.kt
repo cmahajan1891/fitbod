@@ -11,19 +11,6 @@ import javax.inject.Singleton
 @Module
 class ApplicationModule(private val application: FitbodApplication) {
 
-//    @Module
-//    companion object {
-//        @Provides
-//        @JvmStatic
-//        fun provideSharedPreferences(
-//            app: Application
-//        ): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(app)
-//    }
-
-//    @Singleton
-//    @Provides
-//    fun providesApplicationContext(): Context = app
-
     @Provides
     @Singleton
     fun providesExercisesRepository(fileClient: FileClient) = ExercisesRepository(
