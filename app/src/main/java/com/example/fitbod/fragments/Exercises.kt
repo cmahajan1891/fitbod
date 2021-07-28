@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fitbod.R
 import com.example.fitbod.activity.MainActivity
 import com.example.fitbod.adapters.ExerciseAdapter
+import com.example.fitbod.data.model.ExerciseModel
 import com.example.fitbod.di.components.DaggerFragmentComponent
 import com.example.fitbod.di.modules.FragmentModule
 import javax.inject.Inject
@@ -55,10 +56,16 @@ class Exercises : Fragment() {
     }
 
     private fun setupObservers() {
-        (requireActivity() as? MainActivity)?.viewModel?.exercises?.observe(requireActivity(), {
+        (requireActivity() as? MainActivity)?.viewModel?.exerciseMap?.observe(requireActivity(), {
             spinner.visibility = View.GONE
-            exerciseAdapter.appendData(it)
+            exerciseAdapter.appendData(getListOfExercises(it))
         })
+    }
+
+    private fun getListOfExercises(groupedExercises: Map<String, List<ExerciseModel>>): List<ExerciseModel> {
+        return groupedExercises.mapNotNull {
+            it.value.maxByOrNull { entry -> entry.oneRepMax }
+        }
     }
 
 }
