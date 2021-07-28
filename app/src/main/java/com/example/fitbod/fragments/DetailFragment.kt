@@ -55,6 +55,7 @@ class DetailFragment : Fragment() {
 
     private fun setupObservers() {
         val viewModel = (requireActivity() as? MainActivity)?.viewModel
+        val yAxisTitleSuffix = graphView.resources.getString(R.string.exercise_list_item_lbs_text)
         viewModel?.exerciseMap?.observe(
             requireActivity(),
             { exerciseMap ->
@@ -77,14 +78,14 @@ class DetailFragment : Fragment() {
                 graphView.gridLabelRenderer.apply {
                     numHorizontalLabels = 5
                     numVerticalLabels = 5
-                    labelsSpace = 7
+                    labelsSpace = 5
                     setHumanRounding(false)
                     labelFormatter = object : DefaultLabelFormatter() {
                         override fun formatLabel(value: Double, isValueX: Boolean): String {
                             return if (isValueX) {
                                 DATE_FORMATTER_RENDER.format(Date(value.toLong()))
                             } else {
-                                super.formatLabel(value, isValueX)
+                                return value.toString().plus(" $yAxisTitleSuffix ")
                             }
                         }
                     }
