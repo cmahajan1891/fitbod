@@ -16,7 +16,7 @@ class FragmentModule(
 
     @FragmentScope
     @Provides
-    fun provideExerciseAdapter() = ExerciseAdapter(fragment.lifecycle, ArrayList())
+    fun provideExerciseAdapter() = ExerciseAdapter(ArrayList())
 
     @FragmentScope
     @Provides

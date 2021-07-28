@@ -27,7 +27,7 @@ class ExercisesViewModel(
         return list.groupBy {
             it.name
         }.mapNotNull {
-            it.value.maxByOrNull { entry -> entry.weight }
+            it.value.maxByOrNull { entry -> entry.oneRepMax }
         }
     }
 
@@ -40,12 +40,16 @@ class ExercisesViewModel(
             if (entry.size < 5) {
                 return@mapNotNull null
             }
+            val reps = entry[3].toInt()
+            val weight = entry[4].toInt()
+            val oneRepMax = weight / (1.0278 - 0.0278 * reps)
             ExerciseModel(
                 date = entry[0],
                 name = entry[1],
                 set = entry[2].toInt(),
-                reps = entry[3].toInt(),
-                weight = entry[4].toInt()
+                reps = reps,
+                weight = weight,
+                oneRepMax = oneRepMax.toInt()
             )
         }
     }

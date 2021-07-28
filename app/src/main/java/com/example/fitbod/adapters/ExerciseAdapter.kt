@@ -1,13 +1,11 @@
 package com.example.fitbod.adapters
 
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitbod.data.model.ExerciseModel
 import com.example.fitbod.viewholders.ExerciseViewHolder
 
 class ExerciseAdapter(
-    parentLifecycle: Lifecycle,
     private val exercises: ArrayList<ExerciseModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
