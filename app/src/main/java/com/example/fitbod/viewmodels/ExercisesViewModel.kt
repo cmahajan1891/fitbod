@@ -54,7 +54,7 @@ class ExercisesViewModel(
             }
             val reps = entry[3].toInt()
             val weight = entry[4].toInt()
-            val oneRepMax = weight / ((1.0278 - 0.0278) * reps)
+            val oneRepMax = weight / (1.0278 - 0.0278 * reps)
             val date = stringToDate(entry[0])
             date?.let {
                 ExerciseModel(

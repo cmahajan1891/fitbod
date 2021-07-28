@@ -33,6 +33,11 @@ class DetailFragment : Fragment() {
     private lateinit var listDivider: View
     private lateinit var graphView: GraphView
 
+    private var minX: Double? = 0.0
+    private var minY: Double? = 0.0
+    private var maxX: Double? = 0.0
+    private var maxY: Double? = 0.0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,8 +55,24 @@ class DetailFragment : Fragment() {
         val viewModel = (requireActivity() as? MainActivity)?.viewModel
         viewModel?.exerciseMap?.observe(
             requireActivity(),
-            { exercises ->
-                val lineGraphSeries = getDataPoints(exercises)
+            { exerciseMap ->
+                val lineGraphSeries = getDataPoints(exerciseMap)
+
+                graphView.addSeries(lineGraphSeries)
+                graphView.viewport.isXAxisBoundsManual = true
+                graphView.viewport.setMinX(minX ?: 0.0)
+                graphView.viewport.setMaxX(maxX ?: 0.0 + 20)
+                graphView.gridLabelRenderer.numHorizontalLabels = 5
+                graphView.gridLabelRenderer.numVerticalLabels = 5
+                graphView.viewport.isYAxisBoundsManual = true
+                graphView.viewport.setMinY(minY ?: 0.0)
+                graphView.viewport.setMaxY(maxY ?: 0.0)
+                graphView.gridLabelRenderer.labelsSpace = 7
+                graphView.onDataChanged(true, true)
+                graphView.viewport.isScrollable = true
+                graphView.viewport.isScalable = true
+                graphView.gridLabelRenderer.isHumanRounding = false
+
                 graphView.gridLabelRenderer.labelFormatter = object : DefaultLabelFormatter() {
                     override fun formatLabel(value: Double, isValueX: Boolean): String {
                         return if (isValueX) {
@@ -61,15 +82,18 @@ class DetailFragment : Fragment() {
                         }
                     }
                 }
-                graphView.addSeries(lineGraphSeries)
             })
     }
 
     private fun getDataPoints(exerciseMap: Map<String, List<ExerciseModel>>): LineGraphSeries<DataPoint> {
-        val lineGraphSeries = LineGraphSeries<DataPoint>()
         val exercises = exerciseMap.getValue(args.exerciseName)
+        minX = exercises.minByOrNull { it.date }?.date?.time?.toDouble()
+        minY = exercises.minByOrNull { it.oneRepMax }?.oneRepMax?.toDouble()
+        maxX = exercises.maxByOrNull { it.date }?.date?.time?.toDouble()
+        maxY = exercises.maxByOrNull { it.oneRepMax }?.oneRepMax?.toDouble()
+        val lineGraphSeries = LineGraphSeries<DataPoint>()
         exercises.sortedBy { it.date }.forEach {
-            lineGraphSeries.appendData(DataPoint(it.date, it.oneRepMax.toDouble()), true, 50)
+            lineGraphSeries.appendData(DataPoint(it.date, it.oneRepMax.toDouble()), true, 100)
         }
         lineGraphSeries.isDrawDataPoints = true
         lineGraphSeries.isDrawAsPath = true
