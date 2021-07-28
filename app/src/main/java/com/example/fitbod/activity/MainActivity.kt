@@ -1,6 +1,7 @@
 package com.example.fitbod.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -9,8 +10,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.fitbod.FitbodApplication
 import com.example.fitbod.R
+import com.example.fitbod.di.components.DaggerActivityComponent
+import com.example.fitbod.di.modules.ActivityModule
+import com.example.fitbod.viewmodels.ExercisesViewModel
 import com.google.android.material.navigation.NavigationView
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,10 +24,32 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    @Inject
+    lateinit var viewModel: ExercisesViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupViews()
+        setupObservers()
+        viewModel.onCreate()
+    }
+
+    private fun injectDependencies() {
+        DaggerActivityComponent.builder()
+            .applicationComponent((application as FitbodApplication).applicationComponent)
+            .activityModule(
+                ActivityModule(this@MainActivity, this)
+            )
+            .build()
+            .inject(this@MainActivity)
+    }
+
+    private fun setupObservers() {
+        viewModel.exercises.observe(this, {
+            Log.v("exercises", it.toString())
+        })
     }
 
     private fun setupViews() {
