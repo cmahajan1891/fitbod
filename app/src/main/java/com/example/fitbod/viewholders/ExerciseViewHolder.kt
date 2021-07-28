@@ -15,16 +15,16 @@ class ExerciseViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 ) {
 
     private val exerciseName: TextView
-    private val exerciseWeight: TextView
+    private val exerciseOneRepMax: TextView
 
     init {
         exerciseName = itemView.findViewById(R.id.exercise_name) as MaterialTextView
-        exerciseWeight = itemView.findViewById(R.id.exercise_weight) as MaterialTextView
+        exerciseOneRepMax = itemView.findViewById(R.id.exercise_one_rep_max) as MaterialTextView
         itemView.setOnClickListener {
             itemView.findNavController().navigate(
                 ExercisesDirections.actionExercisesToDetailFragment(
-                    exerciseName.text.toString(),
-                    exerciseWeight.text.toString()
+                    exerciseName = exerciseName.text.toString(),
+                    oneRepMax = exerciseOneRepMax.text.toString()
                 )
             )
         }
@@ -32,7 +32,7 @@ class ExerciseViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 
     fun bind(data: ExerciseModel) {
         exerciseName.text = data.name
-        exerciseWeight.text = data.weight.toString()
+        exerciseOneRepMax.text = data.oneRepMax.toString()
     }
 
 }

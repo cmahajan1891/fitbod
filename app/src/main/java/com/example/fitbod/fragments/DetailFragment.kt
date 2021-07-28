@@ -2,13 +2,13 @@ package com.example.fitbod.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import com.example.fitbod.DetailFragmentArgs
 import com.example.fitbod.R
 import com.example.fitbod.activity.MainActivity
 import com.example.fitbod.data.model.ExerciseModel
@@ -35,10 +35,10 @@ class DetailFragment : Fragment() {
     private lateinit var listDivider: View
     private lateinit var graphView: GraphView
 
-    private var minX: Double? = 0.0
-    private var minY: Double? = 0.0
-    private var maxX: Double? = 0.0
-    private var maxY: Double? = 0.0
+    private var minX: Double = 0.0
+    private var minY: Double = 0.0
+    private var maxX: Double = 0.0
+    private var maxY: Double = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,28 +59,33 @@ class DetailFragment : Fragment() {
             requireActivity(),
             { exerciseMap ->
                 val lineGraphSeries = getDataPoints(exerciseMap)
-
+                graphView.removeAllSeries()
                 graphView.addSeries(lineGraphSeries)
-                graphView.viewport.isXAxisBoundsManual = true
-                graphView.viewport.setMinX(minX ?: 0.0)
-                graphView.viewport.setMaxX(maxX ?: 0.0 + 20)
-                graphView.gridLabelRenderer.numHorizontalLabels = 5
-                graphView.gridLabelRenderer.numVerticalLabels = 5
-                graphView.viewport.isYAxisBoundsManual = true
-                graphView.viewport.setMinY(minY ?: 0.0)
-                graphView.viewport.setMaxY(maxY ?: 0.0)
-                graphView.gridLabelRenderer.labelsSpace = 7
-                graphView.onDataChanged(true, true)
-                graphView.viewport.isScrollable = true
-                graphView.viewport.isScalable = true
-                graphView.gridLabelRenderer.isHumanRounding = false
 
-                graphView.gridLabelRenderer.labelFormatter = object : DefaultLabelFormatter() {
-                    override fun formatLabel(value: Double, isValueX: Boolean): String {
-                        return if (isValueX) {
-                            DATE_FORMATTER_RENDER.format(Date(value.toLong()))
-                        } else {
-                            super.formatLabel(value, isValueX)
+                graphView.viewport.apply {
+                    isScrollable = true
+                    isScalable = true
+                    isXAxisBoundsManual = true
+                    isYAxisBoundsManual = true
+                    setMinX(minX)
+                    setMaxX(maxX)
+                    setMinY(minY)
+                    setMaxY(maxY)
+                }
+
+                graphView.onDataChanged(true, true)
+                graphView.gridLabelRenderer.apply {
+                    numHorizontalLabels = 5
+                    numVerticalLabels = 5
+                    labelsSpace = 7
+                    setHumanRounding(false)
+                    labelFormatter = object : DefaultLabelFormatter() {
+                        override fun formatLabel(value: Double, isValueX: Boolean): String {
+                            return if (isValueX) {
+                                DATE_FORMATTER_RENDER.format(Date(value.toLong()))
+                            } else {
+                                super.formatLabel(value, isValueX)
+                            }
                         }
                     }
                 }
@@ -89,26 +94,36 @@ class DetailFragment : Fragment() {
 
     private fun getDataPoints(exerciseMap: Map<String, List<ExerciseModel>>): LineGraphSeries<DataPoint> {
         val exercises = exerciseMap.getValue(args.exerciseName)
-        minX = exercises.minByOrNull { it.date }?.date?.time?.toDouble()
-        minY = exercises.minByOrNull { it.oneRepMax }?.oneRepMax?.toDouble()
-        maxX = exercises.maxByOrNull { it.date }?.date?.time?.toDouble()
-        maxY = exercises.maxByOrNull { it.oneRepMax }?.oneRepMax?.toDouble()
-        val lineGraphSeries = LineGraphSeries<DataPoint>()
-        exercises.sortedBy { it.date }.forEach {
-            lineGraphSeries.appendData(DataPoint(it.date, it.oneRepMax.toDouble()), true, 100)
+
+        val sortedE = exercises.sortedWith { a, b ->
+            when {
+                a.date > b.date -> 1
+                a.date < b.date -> -1
+                else -> b.oneRepMax.compareTo(a.oneRepMax)
+            }
+        }.distinctBy { it.date }
+
+        sortedE.minByOrNull { it.date }?.date?.time?.toDouble()?.let { minX = it }
+        sortedE.minByOrNull { it.oneRepMax }?.oneRepMax?.toDouble()?.let { minY = it }
+        sortedE.maxByOrNull { it.date }?.date?.time?.toDouble()?.let { maxX = it }
+        sortedE.maxByOrNull { it.oneRepMax }?.oneRepMax?.toDouble()?.let { maxY = it }
+
+        return LineGraphSeries(sortedE.map {
+            Log.d("DetailFragment", "DATE - ${it.date} oneRepMax - ${it.oneRepMax}")
+            DataPoint(it.date, it.oneRepMax.toDouble())
+        }.toTypedArray()).apply<LineGraphSeries<DataPoint>> {
+            isDrawDataPoints = true
+            isDrawAsPath = true
         }
-        lineGraphSeries.isDrawDataPoints = true
-        lineGraphSeries.isDrawAsPath = true
-        return lineGraphSeries
     }
 
     private fun setupViews(view: View) {
         exerciseName = view.findViewById(R.id.exercise_name)
-        exerciseWeight = view.findViewById(R.id.exercise_weight)
+        exerciseWeight = view.findViewById(R.id.exercise_one_rep_max)
         listDivider = view.findViewById(R.id.folder_section_divider)
         graphView = view.findViewById(R.id.graph_view)
         listDivider.visibility = View.GONE
         exerciseName.text = args.exerciseName
-        exerciseWeight.text = args.maxWeight
+        exerciseWeight.text = args.oneRepMax
     }
 }

@@ -30,8 +30,7 @@ class ExercisesViewModel(
         if (exerciseMap.value == null) {
             GlobalScope.launch(Dispatchers.Main) {
                 exercisesRepository.getExercises {
-                    val groupedExercises = getGroupedExercises(parseResponse(it))
-                    exerciseMap.postValue(groupedExercises)
+                    exerciseMap.postValue(getGroupedExercises(parseResponse(it)))
                 }
             }
         }
@@ -44,7 +43,7 @@ class ExercisesViewModel(
     }
 
     private fun parseResponse(response: String): List<ExerciseModel> {
-        Log.v("response", response)
+        Log.d("response", response)
         val entries = response.split("\n")
 
         return entries.mapNotNull {

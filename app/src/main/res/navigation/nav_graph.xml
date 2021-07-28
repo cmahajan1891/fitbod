@@ -17,13 +17,13 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.fitbod.DetailFragment"
+        android:name="com.example.fitbod.fragments.DetailFragment"
         tools:layout="@layout/fragment_detail">
         <argument
             android:name="exerciseName"
             app:argType="string" />
         <argument
-            android:name="maxWeight"
+            android:name="oneRepMax"
             app:argType="string" />
     </fragment>
 </navigation>
