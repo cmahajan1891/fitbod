@@ -3,4 +3,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="main_page_label">Exercises</string>
+    <string name="exercise_list_item_record_text">1 RM Record</string>
+    <string name="exercise_list_item_lbs_text">lbs</string>
 </resources>

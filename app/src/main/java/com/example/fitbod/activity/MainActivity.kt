@@ -1,7 +1,6 @@
 package com.example.fitbod.activity
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -32,7 +31,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupViews()
-        setupObservers()
         viewModel.onCreate()
     }
 
@@ -44,12 +42,6 @@ class MainActivity : AppCompatActivity() {
             )
             .build()
             .inject(this@MainActivity)
-    }
-
-    private fun setupObservers() {
-        viewModel.exercises.observe(this, {
-            Log.v("exercises", it.toString())
-        })
     }
 
     private fun setupViews() {

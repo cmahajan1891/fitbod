@@ -20,6 +20,7 @@ class ActivityModule(
     @Provides
     fun providesContext(): Context = activity
 
+    @ActivityScope
     @Provides
     fun providesViewModel(exercisesRepository: ExercisesRepository) = getViewModel(
         viewModelStoreOwner,

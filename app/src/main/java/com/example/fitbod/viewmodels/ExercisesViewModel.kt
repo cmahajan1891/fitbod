@@ -14,15 +14,39 @@ class ExercisesViewModel(
 ) : ViewModel() {
     val exercises: MutableLiveData<List<ExerciseModel>> = MutableLiveData()
     fun onCreate() {
-        GlobalScope.launch(Dispatchers.Main) {
-            exercisesRepository.getExercises {
-                exercises.postValue(parseResponse(it))
+        if (exercises.value == null) {
+            GlobalScope.launch(Dispatchers.Main) {
+                exercisesRepository.getExercises {
+                    exercises.postValue(getGroupedExercises(parseResponse(it)))
+                }
             }
+        }
+    }
+
+    private fun getGroupedExercises(list: List<ExerciseModel>): List<ExerciseModel> {
+        return list.groupBy {
+            it.name
+        }.mapNotNull {
+            it.value.maxByOrNull { entry -> entry.weight }
         }
     }
 
     private fun parseResponse(response: String): List<ExerciseModel> {
         Log.v("response", response)
-        return emptyList()
+        val entries = response.split("\n")
+
+        return entries.mapNotNull {
+            val entry = it.split(",")
+            if (entry.size < 5) {
+                return@mapNotNull null
+            }
+            ExerciseModel(
+                date = entry[0],
+                name = entry[1],
+                set = entry[2].toInt(),
+                reps = entry[3].toInt(),
+                weight = entry[4].toInt()
+            )
+        }
     }
 }
