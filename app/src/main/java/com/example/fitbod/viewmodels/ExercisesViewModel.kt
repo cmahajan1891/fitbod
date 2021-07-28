@@ -23,7 +23,7 @@ class ExercisesViewModel(
         @SuppressLint("ConstantLocale")
         private val DATE_FORMATTER = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
     }
-
+    val title: MutableLiveData<String> = MutableLiveData()
     val exerciseMap = MutableLiveData<Map<String, List<ExerciseModel>>>()
 
     fun onCreate() {
@@ -35,6 +35,8 @@ class ExercisesViewModel(
             }
         }
     }
+
+    fun updateActionBarTitle(title: String) = this.title.postValue(title)
 
     private fun getGroupedExercises(list: List<ExerciseModel>): Map<String, List<ExerciseModel>> {
         return list.groupBy {

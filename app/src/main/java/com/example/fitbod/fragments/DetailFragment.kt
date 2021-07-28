@@ -56,41 +56,45 @@ class DetailFragment : Fragment() {
     private fun setupObservers() {
         val viewModel = (requireActivity() as? MainActivity)?.viewModel
         val yAxisTitleSuffix = graphView.resources.getString(R.string.exercise_list_item_lbs_text)
-        viewModel?.exerciseMap?.observe(
-            requireActivity(),
-            { exerciseMap ->
-                val lineGraphSeries = getDataPoints(exerciseMap)
-                graphView.removeAllSeries()
-                graphView.addSeries(lineGraphSeries)
 
-                graphView.viewport.apply {
-                    isScrollable = true
-                    isScalable = true
-                    isXAxisBoundsManual = true
-                    isYAxisBoundsManual = true
-                    setMinX(minX)
-                    setMaxX(maxX)
-                    setMinY(minY)
-                    setMaxY(maxY)
-                }
+        viewModel?.let {
+            viewModel.updateActionBarTitle(args.exerciseName)
+            viewModel.exerciseMap.observe(
+                requireActivity(),
+                { exerciseMap ->
+                    val lineGraphSeries = getDataPoints(exerciseMap)
+                    graphView.removeAllSeries()
+                    graphView.addSeries(lineGraphSeries)
 
-                graphView.onDataChanged(true, true)
-                graphView.gridLabelRenderer.apply {
-                    numHorizontalLabels = 5
-                    numVerticalLabels = 5
-                    labelsSpace = 5
-                    setHumanRounding(false)
-                    labelFormatter = object : DefaultLabelFormatter() {
-                        override fun formatLabel(value: Double, isValueX: Boolean): String {
-                            return if (isValueX) {
-                                DATE_FORMATTER_RENDER.format(Date(value.toLong()))
-                            } else {
-                                return value.toString().plus(" $yAxisTitleSuffix ")
+                    graphView.viewport.apply {
+                        isScrollable = true
+                        isScalable = true
+                        isXAxisBoundsManual = true
+                        isYAxisBoundsManual = true
+                        setMinX(minX)
+                        setMaxX(maxX)
+                        setMinY(minY)
+                        setMaxY(maxY)
+                    }
+
+                    graphView.onDataChanged(true, true)
+                    graphView.gridLabelRenderer.apply {
+                        numHorizontalLabels = 5
+                        numVerticalLabels = 5
+                        labelsSpace = 5
+                        setHumanRounding(false)
+                        labelFormatter = object : DefaultLabelFormatter() {
+                            override fun formatLabel(value: Double, isValueX: Boolean): String {
+                                return if (isValueX) {
+                                    DATE_FORMATTER_RENDER.format(Date(value.toLong()))
+                                } else {
+                                    return value.toString().plus(" $yAxisTitleSuffix ")
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
+        }
     }
 
     private fun getDataPoints(exerciseMap: Map<String, List<ExerciseModel>>): LineGraphSeries<DataPoint> {

@@ -31,7 +31,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupViews()
+        setupObservers()
         viewModel.onCreate()
+    }
+
+    private fun setupObservers() {
+        viewModel.title.observe(this, {
+            supportActionBar?.title = it
+        })
     }
 
     private fun injectDependencies() {
