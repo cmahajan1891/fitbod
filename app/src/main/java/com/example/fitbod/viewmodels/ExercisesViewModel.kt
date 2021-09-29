@@ -4,11 +4,12 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.fitbod.data.model.ExerciseModel
 import com.example.fitbod.repositories.ExercisesRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,10 +29,9 @@ class ExercisesViewModel(
 
     fun onCreate() {
         if (exerciseMap.value == null) {
-            GlobalScope.launch(Dispatchers.Main) {
-                exercisesRepository.getExercises {
-                    exerciseMap.postValue(getGroupedExercises(parseResponse(it)))
-                }
+            viewModelScope.launch {
+                val exercises = exercisesRepository.getExercises()
+                exerciseMap.postValue(getGroupedExercises(parseResponse(exercises)))
             }
         }
     }

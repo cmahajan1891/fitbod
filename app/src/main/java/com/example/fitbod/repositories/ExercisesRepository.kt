@@ -9,11 +9,11 @@ class ExercisesRepository(
     private val readFileClient: FileClient
 ) {
 
-    suspend fun getExercises(callback: (response: String) -> Unit) {
+    suspend fun getExercises(): String {
 
-        withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             val response = readFileClient.readAssetFromFile(fileName)
-            callback.invoke(response)
+            response
         }
     }
 
